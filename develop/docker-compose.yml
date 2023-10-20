@@ -86,6 +86,7 @@ services:
       - backend
     restart: always
 
+  #prometheus监控 — Prometheus for monitoring
   prometheus:
     build:
       context: ./prometheus
@@ -100,6 +101,7 @@ services:
       - backend
     restart: always
 
+  #查看prometheus监控数据 - Grafana to view Prometheus monitoring data
   grafana:
     build:
       context: ./grafana
@@ -139,7 +141,8 @@ services:
     networks:
       - backend
     restart: always
-
+  
+  #zookeeper是kafka的依赖 - Zookeeper is the dependencies of Kafka
   zookeeper:
     build:
       context: ./zookeeper
@@ -232,3 +235,41 @@ services:
         - ${KIBANA_PORT}:5601/tcp
     networks:
       - backend
+
+  #消费kafka中filebeat收集的数据输出到es - The data output collected by FileBeat in Kafka is output to ES
+  go-stash:
+    build:
+      context: ./go-stash
+    environment:
+      # 时区上海 - Time zone Shanghai (Change if needed)
+      TZ: Asia/Shanghai
+    user: root
+    restart: always
+    volumes:
+      - ./go-stash/etc:/app/etc
+    networks:
+      - backend
+    depends_on:
+      - elasticsearch
+      - kafka
+
+  #收集业务数据 - Collect business data
+  filebeat:
+    image: elastic/filebeat:7.13.4
+    container_name: filebeat
+    environment:
+      # 时区上海 - Time zone Shanghai (Change if needed)
+      TZ: Asia/Shanghai
+    user: root
+    restart: always
+    entrypoint: "filebeat -e -strict.perms=false"  #解决配置文件权限问题 - Solving the configuration file permissions
+    volumes:
+      - ./deploy/filebeat/conf/filebeat.yml:/usr/share/filebeat/filebeat.yml
+      # 此处需指定docker的containers目录，取决于你docker的配置 - The containers directory of docker needs to be specified here, depending on your docker configuration
+      # 如snap安装的docker，则为/var/snap/docker/common/var-lib-docker/containers - Example if docker is installed by Snap /var/snap/docker/common/var-lib-docker/containers
+      # - /var/snap/docker/common/var-lib-docker/containers:/var/lib/docker/containers
+      - /var/lib/docker/containers:/var/lib/docker/containers
+    networks:
+      - backend
+    depends_on:
+      - kafka
