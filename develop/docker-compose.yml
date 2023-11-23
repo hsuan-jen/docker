@@ -259,8 +259,8 @@ services:
 
   #收集业务数据 - Collect business data
   filebeat:
-    image: elastic/filebeat:7.13.4
-    container_name: filebeat
+    build:
+      context: ./filebeat
     environment:
       # 时区上海 - Time zone Shanghai (Change if needed)
       TZ: Asia/Shanghai
@@ -268,7 +268,7 @@ services:
     restart: always
     entrypoint: "filebeat -e -strict.perms=false"  #解决配置文件权限问题 - Solving the configuration file permissions
     volumes:
-      - ./deploy/filebeat/conf/filebeat.yml:/usr/share/filebeat/filebeat.yml
+      - ./filebeat/conf/filebeat.yml:/usr/share/filebeat/filebeat.yml
       # 此处需指定docker的containers目录，取决于你docker的配置 - The containers directory of docker needs to be specified here, depending on your docker configuration
       # 如snap安装的docker，则为/var/snap/docker/common/var-lib-docker/containers - Example if docker is installed by Snap /var/snap/docker/common/var-lib-docker/containers
       # - /var/snap/docker/common/var-lib-docker/containers:/var/lib/docker/containers
