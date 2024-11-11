@@ -1,0 +1,142 @@
+version: '3'
+
+# 声明一个名为network的networks,subnet为network的子网地址,默认网关是177.7.0.1
+networks:
+  redis-cluster_network:
+    ipam:
+      driver: default
+      config:
+        - subnet: '172.24.0.0/16'
+        
+services:
+  # redis1配置
+  redis1:
+    image: redis:5.0.5
+    container_name: redis-1
+    environment: # 环境变量
+      - PORT=8301 # 会使用config/nodes-${PORT}.conf这个配置文件
+      - TZ=Asia/Shanghai
+    ports:
+      - 8301:8301
+      - 18301:18301
+    stdin_open: true # 标准输入打开
+    tty: true # 后台运行不退出
+    privileged: true # 拥有容器内命令执行的权限
+    volumes:
+      - /data/docker/redis-cluster/8301/redis.conf:/usr/local/etc/redis/redis.conf
+      - /data/docker/redis-cluster/8301/data:/data
+      - /data/docker/redis-cluster/8301/logs:/var/log/redis
+    command: [ "redis-server", "/usr/local/etc/redis/redis.conf" ]
+    networks:
+      redis-cluster_network:
+        ipv4_address: 172.24.0.11
+        
+  # redis2配置
+  redis2:
+    image: redis:5.0.5
+    container_name: redis-2
+    environment: # 环境变量
+      - PORT=8302 # 会使用config/nodes-${PORT}.conf这个配置文件
+      - TZ=Asia/Shanghai
+    ports:
+      - 8302:8302
+      - 18302:18302
+    stdin_open: true # 标准输入打开
+    tty: true # 后台运行不退出
+    privileged: true # 拥有容器内命令执行的权限
+    volumes:
+      - /data/docker/redis-cluster/8302/redis.conf:/usr/local/etc/redis/redis.conf
+      - /data/docker/redis-cluster/8302/data:/data
+      - /data/docker/redis-cluster/8302/logs:/var/log/redis
+    command: [ "redis-server", "/usr/local/etc/redis/redis.conf" ]
+    networks:
+      redis-cluster_network:
+        ipv4_address: 172.24.0.12
+    
+  # redis3配置
+  redis3:
+    image: redis:5.0.5
+    container_name: redis-3
+    environment: # 环境变量
+      - PORT=8303 # 会使用config/nodes-${PORT}.conf这个配置文件
+      - TZ=Asia/Shanghai
+    ports:
+      - 8303:8303
+      - 18303:18303
+    stdin_open: true # 标准输入打开
+    tty: true # 后台运行不退出
+    privileged: true # 拥有容器内命令执行的权限
+    volumes:
+      - /data/docker/redis-cluster/8303/redis.conf:/usr/local/etc/redis/redis.conf
+      - /data/docker/redis-cluster/8303/data:/data
+      - /data/docker/redis-cluster/8303/logs:/var/log/redis
+    command: [ "redis-server", "/usr/local/etc/redis/redis.conf" ]
+    networks:
+      redis-cluster_network:
+        ipv4_address: 172.24.0.13
+    
+  # redis4配置
+  redis4:
+    image: redis:5.0.5
+    container_name: redis-4
+    environment: # 环境变量
+      - PORT=8304 # 会使用config/nodes-${PORT}.conf这个配置文件
+      - TZ=Asia/Shanghai
+    ports:
+      - 8304:8304
+      - 18304:18304
+    stdin_open: true # 标准输入打开
+    tty: true # 后台运行不退出
+    privileged: true # 拥有容器内命令执行的权限
+    volumes:
+      - /data/docker/redis-cluster/8304/redis.conf:/usr/local/etc/redis/redis.conf
+      - /data/docker/redis-cluster/8304/data:/data
+      - /data/docker/redis-cluster/8304/logs:/var/log/redis
+    command: [ "redis-server", "/usr/local/etc/redis/redis.conf" ]
+    networks:
+      redis-cluster_network:
+        ipv4_address: 172.24.0.14
+    
+  # redis5配置
+  redis5:
+    image: redis:5.0.5
+    container_name: redis-5
+    environment: # 环境变量
+      - PORT=8305 # 会使用config/nodes-${PORT}.conf这个配置文件
+      - TZ=Asia/Shanghai
+    ports:
+      - 8305:8305
+      - 18305:18305
+    stdin_open: true # 标准输入打开
+    tty: true # 后台运行不退出
+    privileged: true # 拥有容器内命令执行的权限
+    volumes:
+      - /data/docker/redis-cluster/8305/redis.conf:/usr/local/etc/redis/redis.conf
+      - /data/docker/redis-cluster/8305/data:/data
+      - /data/docker/redis-cluster/8305/logs:/var/log/redis
+    command: [ "redis-server", "/usr/local/etc/redis/redis.conf" ]
+    networks:
+      redis-cluster_network:
+        ipv4_address: 172.24.0.15
+    
+  #redis6配置
+  redis6:
+    image: redis:5.0.5
+    container_name: redis-6
+    environment: # 环境变量
+      - PORT=8306 # 会使用config/nodes-${PORT}.conf这个配置文件
+      - TZ=Asia/Shanghai
+    ports:
+      - 8306:8306
+      - 18306:18306
+    stdin_open: true # 标准输入打开
+    tty: true # 后台运行不退出
+    privileged: true # 拥有容器内命令执行的权限
+    volumes:
+      - /data/docker/redis-cluster/8306/redis.conf:/usr/local/etc/redis/redis.conf
+      - /data/docker/redis-cluster/8306/data:/data
+      - /data/docker/redis-cluster/8306/logs:/var/log/redis
+    command: [ "redis-server", "/usr/local/etc/redis/redis.conf" ]
+    networks:
+      redis-cluster_network:
+        ipv4_address: 172.24.0.16
