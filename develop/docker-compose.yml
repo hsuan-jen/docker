@@ -1,4 +1,3 @@
-version: '3.5'
 # 网络配置
 networks:
   backend:
@@ -22,18 +21,18 @@ services:
       # - backend
     # restart: always                      # 指定容器退出后的重启策略为始终重启
 
-  etcd:                                  # 自定义容器名称
-    build:
-      context: ./etcd                    # 指定构建使用的 Dockerfile 文件
-    environment:
-      - TZ=${TZ}
-      - ALLOW_NONE_AUTHENTICATION=yes
-      - ETCD_ADVERTISE_CLIENT_URLS=http://etcd:2379
-    ports:                               # 设置端口映射
-      - "${ETCD_PORT}:2379"
-    networks:
-      - backend
-    restart: always
+  # etcd:                                  # 自定义容器名称
+  #   build:
+  #     context: ./etcd                    # 指定构建使用的 Dockerfile 文件
+  #   environment:
+  #     - TZ=${TZ}
+  #     - ALLOW_NONE_AUTHENTICATION=yes
+  #     - ETCD_ADVERTISE_CLIENT_URLS=http://etcd:2379
+  #   ports:                               # 设置端口映射
+  #     - "${ETCD_PORT}:2379"
+  #   networks:
+  #     - backend
+  #   restart: always
 
   mysql:
     build:
@@ -70,45 +69,45 @@ services:
       - backend
     restart: always
 
-  etcd-manage:
-    build:
-      context: ./etcd-manage
-    environment:
-      - TZ=${TZ}
-    ports:
-      - "${ETCD_MANAGE_PORT}:8080"                    # 设置容器8080端口映射指定宿主机端口，用于宿主机访问可视化web
-    depends_on:                                       # 依赖容器
-      - etcd                                          # 在 etcd 服务容器启动后启动
-    networks:
-      - backend
-    restart: always
+  # etcd-manage:
+  #   build:
+  #     context: ./etcd-manage
+  #   environment:
+  #     - TZ=${TZ}
+  #   ports:
+  #     - "${ETCD_MANAGE_PORT}:8080"                    # 设置容器8080端口映射指定宿主机端口，用于宿主机访问可视化web
+  #   depends_on:                                       # 依赖容器
+  #     - etcd                                          # 在 etcd 服务容器启动后启动
+  #   networks:
+  #     - backend
+  #   restart: always
 
   #prometheus监控 — Prometheus for monitoring
-  prometheus:
-    build:
-      context: ./prometheus
-    environment:
-      - TZ=${TZ}
-    privileged: true
-    volumes:
-      - ./prometheus/prometheus.yml:/opt/bitnami/prometheus/conf/prometheus.yml  # 将 prometheus 配置文件挂载到容器里
-    ports:
-      - "${PROMETHEUS_PORT}:9090"                     # 设置容器9090端口映射指定宿主机端口，用于宿主机访问可视化web
-    networks:
-      - backend
-    restart: always
+  # prometheus:
+  #   build:
+  #     context: ./prometheus
+  #   environment:
+  #     - TZ=${TZ}
+  #   privileged: true
+  #   volumes:
+  #     - ./prometheus/prometheus.yml:/opt/bitnami/prometheus/conf/prometheus.yml  # 将 prometheus 配置文件挂载到容器里
+  #   ports:
+  #     - "${PROMETHEUS_PORT}:9090"                     # 设置容器9090端口映射指定宿主机端口，用于宿主机访问可视化web
+  #   networks:
+  #     - backend
+  #   restart: always
 
   #查看prometheus监控数据 - Grafana to view Prometheus monitoring data
-  grafana:
-    build:
-      context: ./grafana
-    environment:
-      - TZ=${TZ}
-    ports:
-      - "${GRAFANA_PORT}:3000"                        # 设置容器3000端口映射指定宿主机端口，用于宿主机访问可视化web
-    networks:
-      - backend
-    restart: always
+  # grafana:
+  #   build:
+  #     context: ./grafana
+  #   environment:
+  #     - TZ=${TZ}
+  #   ports:
+  #     - "${GRAFANA_PORT}:3000"                        # 设置容器3000端口映射指定宿主机端口，用于宿主机访问可视化web
+  #   networks:
+  #     - backend
+  #   restart: always
 
   # jaeger:
   #   build:
@@ -194,44 +193,44 @@ services:
   #     - zookeeper
   #     - kafka
       
-  elasticsearch:
-    build:
-      context: ./elasticsearch
-    restart: always 
-    privileged: true    # es运行需要root权限，给予容器内真正root权限才可运行
-    environment: # 配置环境变量
-        - "ES_JAVA_OPTS=-Xms512m -Xmx512m" # 指定内存限制
-        - "discovery.type=single-node" # 指定单节点模式
-        - "xpack.security.enabled=false" # 关闭xpack认证
-    volumes: # 容器内部目录或者文件挂载到宿主机（本服务器）
-        # 时间目录为了容器内部和宿主机时间同步
-        - /etc/localtime:/etc/localtime
-        # 把容器内部数据目录挂载出来，这样不会数据丢失
-        - ./elasticsearch/data/:/usr/share/elasticsearch/data/
-        # 挂载配置文件，方便在宿主机直接修改
-        - ./elasticsearch/config/elasticsearch.yml:/usr/share/config/elasticsearch.yml
-        # 挂载插件目录，方便在宿主机直接管理插件
-        - ./elasticsearch/plugins/:/usr/share/elasticsearch/plugins/
-    ports: # 把用到的端口从容器映射到宿主机出来，这样才可以在外部连接访问
-        - ${ELASTIC_PORT}:9200/tcp
-        - ${ELASTIC_CLUSTER_PORT}:9300/tcp
-    networks:
-      - backend
-  kibana:
-    build:
-      context: ./kibana
-    restart: always	
-    environment:
-        - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-        - "ELASTICSEARCH_HOSTS=http://elasticsearch:9200"
-    volumes:
-        - /etc/localtime:/etc/localtime
-    depends_on:	# 服务依赖
-        - elasticsearch
-    ports:
-        - ${KIBANA_PORT}:5601/tcp
-    networks:
-      - backend
+  # elasticsearch:
+  #   build:
+  #     context: ./elasticsearch
+  #   restart: always 
+  #   privileged: true    # es运行需要root权限，给予容器内真正root权限才可运行
+  #   environment: # 配置环境变量
+  #       - "ES_JAVA_OPTS=-Xms512m -Xmx512m" # 指定内存限制
+  #       - "discovery.type=single-node" # 指定单节点模式
+  #       - "xpack.security.enabled=false" # 关闭xpack认证
+  #   volumes: # 容器内部目录或者文件挂载到宿主机（本服务器）
+  #       # 时间目录为了容器内部和宿主机时间同步
+  #       - /etc/localtime:/etc/localtime
+  #       # 把容器内部数据目录挂载出来，这样不会数据丢失
+  #       - ./elasticsearch/data/:/usr/share/elasticsearch/data/
+  #       # 挂载配置文件，方便在宿主机直接修改
+  #       - ./elasticsearch/config/elasticsearch.yml:/usr/share/config/elasticsearch.yml
+  #       # 挂载插件目录，方便在宿主机直接管理插件
+  #       - ./elasticsearch/plugins/:/usr/share/elasticsearch/plugins/
+  #   ports: # 把用到的端口从容器映射到宿主机出来，这样才可以在外部连接访问
+  #       - ${ELASTIC_PORT}:9200/tcp
+  #       - ${ELASTIC_CLUSTER_PORT}:9300/tcp
+  #   networks:
+  #     - backend
+  # kibana:
+  #   build:
+  #     context: ./kibana
+  #   restart: always	
+  #   environment:
+  #       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+  #       - "ELASTICSEARCH_HOSTS=http://elasticsearch:9200"
+  #   volumes:
+  #       - /etc/localtime:/etc/localtime
+  #   depends_on:	# 服务依赖
+  #       - elasticsearch
+  #   ports:
+  #       - ${KIBANA_PORT}:5601/tcp
+  #   networks:
+  #     - backend
 
   #消费kafka中filebeat收集的数据输出到es - The data output collected by FileBeat in Kafka is output to ES
   # go-stash:
