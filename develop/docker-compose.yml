@@ -274,6 +274,7 @@ services:
     container_name: php7.4
     build:
       context: ./php                    # 指定构建使用的 Dockerfile 文件
+    entrypoint: ["/usr/local/bin/php-entrypoint.sh"]
     restart: always
     privileged: true
     ports:

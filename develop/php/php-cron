@@ -1,0 +1,3 @@
+# php cron jobs
+# Example: replace this with your actual scheduled command
+* * * * * root echo "cron alive: $(date)" >> /var/log/cron.log 2>&1

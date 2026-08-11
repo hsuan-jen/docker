@@ -14,6 +14,7 @@ RUN apt-get update \
     libzip-dev \
     libgdbm-dev \
     ca-certificates \
+    cron \
     && docker-php-ext-configure gd --with-webp --with-jpeg --with-freetype \
     && docker-php-ext-configure dba --with-gdbm \
     && docker-php-ext-install -j$(nproc) gd iconv pdo_mysql mysqli bcmath calendar exif gettext sockets dba pcntl shmop sysvmsg sysvsem sysvshm \
@@ -22,3 +23,10 @@ RUN apt-get update \
     && docker-php-ext-enable redis imagick \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
+
+COPY php-cron /etc/cron.d/php-cron
+COPY php-entrypoint.sh /usr/local/bin/php-entrypoint.sh
+RUN chmod 0644 /etc/cron.d/php-cron \
+    && chmod +x /usr/local/bin/php-entrypoint.sh
+
+ENTRYPOINT ["/usr/local/bin/php-entrypoint.sh"]
